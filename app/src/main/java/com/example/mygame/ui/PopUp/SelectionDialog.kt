@@ -11,18 +11,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.mygame.data.ActionEntity
 import com.example.mygame.data.LootDrop
-import com.example.mygame.data.ProductionZone
 import com.example.mygame.data.SelectableEntity
 import com.example.mygame.ui.components.SelectionGrid
 import com.example.mygame.ui.theme.GameText.PopUpTitle
-
-/*
-SelectionGrid(
-                options = options,
-                onSelect = onSelect as (SelectableEntity) -> Unit
-            )
- */
 
 @Composable
 fun SelectionDialog(
@@ -54,7 +47,7 @@ fun SelectionDialog(
 @Composable
 fun SelectionDialogPreview() {
     val productionZones = listOf(
-        ProductionZone(
+        ActionEntity.ProductionZone(
             id = "wood_production",
             name = "Forêt des Murmures",
             isUnlocked = true,
@@ -62,7 +55,7 @@ fun SelectionDialogPreview() {
             nextTierId = "deep_forest_production", // Ce sera la zone "bloquée"
             lootTable = listOf(LootDrop("green_herb", 1, 1.0),LootDrop("commun_wood", 1, 0.50))
         ),
-        ProductionZone(
+        ActionEntity.ProductionZone(
             id = "meadow_production",
             name = "Plaine verdoiante",
             isUnlocked = true,

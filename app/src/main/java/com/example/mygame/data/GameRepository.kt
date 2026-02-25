@@ -21,7 +21,7 @@ class GameRepository {
     }
 
     // --- ACCÈS AUX ZONES ET MACHINES ---
-    fun getProductionZone(id: String): ProductionZone? {
+    fun getProductionZone(id: String): ActionEntity.ProductionZone? {
         return GameDatabase.getProductionZoneById(id)
     }
 
@@ -31,9 +31,13 @@ class GameRepository {
     fun getAllProductionAreas(): List<ProductionArea> {
         return GameDatabase.productionAreas
     }
+    fun getActionEntity(id: String): ActionEntity? {
+        return GameDatabase.getActionEnityById(id)
+    }
 
 
-    fun getProductionZonesForIds(ids: List<String>): List<ProductionZone> {
+
+    fun getProductionZonesForIds(ids: List<String>): List<ActionEntity.ProductionZone> {
         return ids.mapNotNull { getProductionZone(it) }
     }
 
