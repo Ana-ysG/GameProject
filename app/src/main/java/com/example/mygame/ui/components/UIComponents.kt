@@ -1,5 +1,10 @@
 package com.example.mygame.ui.components
 
+import android.R.attr.label
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -7,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,13 +25,20 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -33,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.mygame.ui.theme.GameText
+import kotlinx.coroutines.delay
 
 @Composable
 fun EnvironmentDisplay(imageRes: Int) {
@@ -152,12 +166,54 @@ fun ResourceInfo(label: String, value: String, icon: ImageVector? = null) {
     }
 }
 
+@Composable
+fun SmoothProgressBar(targetProgress: Double, height: Dp = 24.dp) {
+    var displayProgress by remember { mutableFloatStateOf(0f) }
+
+    // When logicProgress reaches 0 (reset), we only reset the bar IF it was already high
+    LaunchedEffect(targetProgress) {
+        if (targetProgress == 0.0) {
+            // The logic reset! But we wait a tiny bit so the player sees the 100%
+            delay(300)
+            displayProgress = 0f
+        } else {
+            displayProgress = targetProgress.toFloat()
+        }
+    }
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = displayProgress,
+        animationSpec = when {
+            displayProgress == 0f -> snap() // Reset instantané
+            else -> tween(durationMillis = 300, easing = LinearEasing)
+        },
+        label = "ActionProgress"
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .height(height)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        LinearProgressIndicator(
+            progress = { animatedProgress },
+            modifier = Modifier.fillMaxSize(),
+            color =  MaterialTheme.colorScheme.primary,
+            trackColor =  MaterialTheme.colorScheme.surfaceVariant,
+            strokeCap = StrokeCap.Butt
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun CardsDemoPreview() {
     Column(modifier = Modifier.padding(16.dp)) {
         ResourceInfo(label = "Or", value = "1000", icon = Icons.Default.Build)
         GameText.ResourceAmount("Test", color = Color.Red, icon = Icons.Default.Build)
+
+        SmoothProgressBar(targetProgress = 0.7)
+        
 
         Text("Variante Horizontale (Large) :")
         GameCard(backgroundImage = android.R.drawable.ic_dialog_map) {

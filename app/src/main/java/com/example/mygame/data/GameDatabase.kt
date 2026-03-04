@@ -33,13 +33,13 @@ object GameDatabase {
     )
 
     val machines = listOf(
-        Machine(
+        ActionEntity.Machine(
             id = "cauldron",
             name = "Chaudron en Fonte",
             isUnlocked = true,
             availableActionsIds = listOf("craft_wand")
         ),
-        Machine(
+        ActionEntity.Machine(
             id = "mac2",
             name = "machine 1",
             isUnlocked = true,
@@ -76,7 +76,7 @@ object GameDatabase {
     )
 
     val productionZones = listOf(
-        ProductionZone(
+        ActionEntity.ProductionZone(
             id = "wood_production",
             name = "Forêt des Murmures",
             isUnlocked = true,
@@ -84,7 +84,7 @@ object GameDatabase {
             nextTierId = "deep_forest_production", // Ce sera la zone "bloquée"
             lootTable = listOf(LootDrop("green_herb", 1, 1.0),LootDrop("commun_wood", 1, 0.50))
         ),
-        ProductionZone(
+        ActionEntity.ProductionZone(
             id = "meadow_production",
             name = "Plaine verdoiante",
             isUnlocked = true,
@@ -116,4 +116,7 @@ object GameDatabase {
     fun getRecepie(id: String) = recipes.find { it.id == id }
     fun getProductionZoneById(id: String) = productionZones.find { it.id == id }
     fun getResouceName(id: String) = getResourceById(id)?.name ?: "Inconnu"
+    fun getProductionAreaById(id: String) = productionAreas.find { it.id == id }
+
+    fun getActionEnityById(id: String) = machines.find { it.id == id } ?: productionZones.find { it.id == id }
 }

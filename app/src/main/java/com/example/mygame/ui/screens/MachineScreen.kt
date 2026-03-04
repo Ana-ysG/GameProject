@@ -28,7 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mygame.data.Machine
+import com.example.mygame.data.ActionEntity
 import com.example.mygame.data.Recipe
 import com.example.mygame.ui.PopUp.SelectionDialog
 import com.example.mygame.ui.components.ActionZoneComposant
@@ -41,7 +41,7 @@ import kotlin.collections.component2
 
 @Composable
 fun MachineScreen(
-    machine: Machine,
+    machine: ActionEntity.Machine,
     viewModel: GameViewModel,
     onBack: () -> Unit
 ){
@@ -56,6 +56,8 @@ fun MachineScreen(
 
     ActionZoneComposant(
         zone = machine,
+        actionId = machine.id,
+        viewModel = viewModel,
         modifier = Modifier
     ){
         Row(
@@ -64,7 +66,7 @@ fun MachineScreen(
             Column() {
                 Spacer(modifier = Modifier.height(30.dp))
                 IconButton(
-                    onClick = {viewModel.craftItem(recipeId)}
+                    onClick = {viewModel.changeCurrentAction(machine.id)}
                 ){
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
@@ -154,7 +156,7 @@ fun CraftCard(
 @Preview(showBackground = true)
 fun MachineScreenPreview() {
     val viewModel = GameViewModel()
-    val selectedMachine = Machine(
+    val selectedMachine = ActionEntity.Machine(
         id = "cauldron",
         name = "Chaudron en Fonte",
         isUnlocked = true,

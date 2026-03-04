@@ -29,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.mygame.data.ActionEntity
 import com.example.mygame.data.ProductionArea
-import com.example.mygame.data.ProductionZone
 import com.example.mygame.ui.PopUp.SelectionDialog
 import com.example.mygame.ui.components.ActionZoneComposant
 import com.example.mygame.ui.components.BackButton
@@ -45,9 +45,13 @@ fun ProductionScreen(
     viewModel: GameViewModel,
     onBack: () -> Unit
 ){
+    val currentZoneId = viewModel.state.areaToProductionZone[area.id] ?: area.defaultArea
+
     BackButton(onBack)
     ActionZoneComposant(
         zone = area,
+        actionId = currentZoneId,
+        viewModel = viewModel,
         modifier = Modifier.padding(4.dp)
     ){
         Column(
@@ -107,7 +111,7 @@ fun ProductionZoneContent(
             ) {
                 Column() {
                     IconButton(
-                        onClick = {viewModel.CollectLoot(targetZone.lootTable)}
+                        onClick = {viewModel.changeCurrentAction(targetZone.id)}
                     ){
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
@@ -151,7 +155,7 @@ fun ProductionZoneContent(
             options = viewModel.unlockProductionZone(area.availableActionsIds),
             onSelect = { selectedZone ->
                 showDialog = false
-                viewModel.changeProductionZone(area, selectedZone as ProductionZone)
+                viewModel.changeProductionZone(area, selectedZone as ActionEntity.ProductionZone)
             },
             onDismiss = {showDialog = false }
         )

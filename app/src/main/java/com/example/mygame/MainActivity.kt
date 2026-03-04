@@ -19,6 +19,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -26,8 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mygame.data.ActionEntity
 import com.example.mygame.data.GameDatabase
-import com.example.mygame.data.Machine
 import com.example.mygame.ui.screens.ExplorationScreen
 import com.example.mygame.ui.PopUp.IconActionButton
 import com.example.mygame.ui.PopUp.SelectionDialog
@@ -37,6 +38,7 @@ import com.example.mygame.ui.screens.MarketScreen
 import com.example.mygame.ui.screens.StatueScreen
 import com.example.mygame.ui.screens.WorkshopScreen
 import com.example.mygame.viewmodel.GameViewModel
+import kotlinx.coroutines.delay
 import kotlin.collections.set
 
 class MainActivity : ComponentActivity() {
@@ -46,10 +48,16 @@ class MainActivity : ComponentActivity() {
             val gameViewModel: GameViewModel = viewModel()
 
             var currentTab by remember { mutableIntStateOf(0) }
-            val selectedMachine = remember(currentTab) { mutableStateOf<Machine?>(null) }
+            val selectedMachine = remember(currentTab) { mutableStateOf<ActionEntity.Machine?>(null) }
 
             val showMachineSelectionDialog = currentTab == 1 && gameViewModel.state.currentWorkshopMachine == null
 
+            LaunchedEffect(Unit) {
+                while (true) {
+                    gameViewModel.updateGameTick()
+                    delay(1000L) // Attend 1 seconde entre chaque battement
+                }
+            }
             Scaffold(
                 bottomBar = {
                     NavigationBar {
@@ -102,7 +110,7 @@ class MainActivity : ComponentActivity() {
                                     title = "Quelle machine utiliser ?",
                                     options = GameDatabase.machines,
                                     onSelect = { machine ->
-                                        selectedMachine.value = machine as Machine
+                                        selectedMachine.value = machine as ActionEntity.Machine
                                     },
                                     onDismiss = { currentTab = 0 } // Retour si annulation
                                 )
@@ -144,7 +152,7 @@ class MainActivity : ComponentActivity() {
                     title = "Voyager vers...",
                     options = GameDatabase.machines,
                     onSelect = { selectedMachine ->
-                        gameViewModel.changeCurrentMachine(selectedMachine as Machine)
+                        gameViewModel.changeCurrentMachine(selectedMachine as ActionEntity.Machine)
                     },
                     // Si on ferme le dialogue, on retourne à l'onglet principal (Autel)
                     onDismiss = { gameViewModel.changeCurrentMachine(null) }

@@ -5,17 +5,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.mygame.data.ActionEntity
 import com.example.mygame.data.GameRepository
 import com.example.mygame.data.LootDrop
-import com.example.mygame.data.Machine
 import com.example.mygame.data.ProductionArea
-import com.example.mygame.data.ProductionZone
 import com.example.mygame.data.Quest
 import com.example.mygame.data.QuestState
 import com.example.mygame.data.Recipe
 import com.example.mygame.data.constants.ExplorationScene
 import com.example.mygame.data.constants.MarketScene
 import com.example.mygame.logic.GameState
+import com.example.mygame.logic.LogicEngine
 import kotlin.random.Random
 
 class GameViewModel(
@@ -30,6 +30,10 @@ class GameViewModel(
         state = state.copy(mana = state.mana + 1)
     }
 
+    fun updateManaBoost(value: Double) {
+        state = state.copy(manaboost = value)
+    }
+
     // --- LOGIQUE DU REPOSITORY ---
     fun getResourceById(id: String) = repository.getResource(id)
     fun getRecipeById(id: String) = repository.getRecipe(id)
@@ -40,7 +44,15 @@ class GameViewModel(
     fun getAllSellableResources() = repository.getAllSellableResources()
 
 
+    fun updateGameTick() {
+        val currentTime = System.currentTimeMillis()
+        // On calcule l'écart en secondes (ex: 1000ms = 1.0s)
+        val deltaTime = (currentTime - state.lastTickTimestamp).toDouble() / 1000.0
 
+        if (deltaTime < 0.1) return
+        // On délègue tout le calcul au moteur
+        state = LogicEngine.applyTick(state, deltaTime, repository)
+    }
 
     // --- LOGIQUE D'INVENTAIRE ---
     fun collectRessource(ressourceId: String, amount: Long = 1) {
@@ -155,7 +167,20 @@ class GameViewModel(
     }
 
     // --- LOGIQUE DE PRODUCTION & MACHINES ---
-    fun changeProductionZone(area: ProductionArea, zone: ProductionZone) {
+    fun changeCurrentAction(id: String?) {
+        if(state.currentActionId == null || state.currentActionId != id){
+            state = state.copy(
+                currentActionId = id,
+                actionProgress = 0.0
+            )
+        }else{
+            state = state.copy(
+                currentActionId = null,
+                actionProgress = 0.0
+            )
+        }
+    }
+    fun changeProductionZone(area: ProductionArea, zone: ActionEntity.ProductionZone) {
         val newMap = state.areaToProductionZone.toMutableMap()
         newMap[area.id] = zone.id
 
@@ -164,7 +189,7 @@ class GameViewModel(
         state = state.copy(areaToProductionZone = newMap)
     }
 
-    fun changeCurrentMachine(machine: Machine?) {
+    fun changeCurrentMachine(machine: ActionEntity.Machine?) {
         state = state.copy(currentWorkshopMachine = machine)
     }
 
@@ -186,7 +211,7 @@ class GameViewModel(
         }
     }
 
-    fun unlockProductionZone(zoneIds: List<String>): List<ProductionZone> {
+    fun unlockProductionZone(zoneIds: List<String>): List<ActionEntity.ProductionZone> {
         return zoneIds.mapNotNull { id ->
             repository.getProductionZone(id)?.takeIf { it.isUnlocked }
         }

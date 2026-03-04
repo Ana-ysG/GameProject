@@ -11,5 +11,6 @@ open class ProductionManager {
 
 }
 
+
 fun Long.toGameFormat(): String = if (this >= 1000) "${this / 1000}k" else this.toString()
 fun Int.toGameFormat(): String = if (this >= 1000) "${this / 1000}k" else this.toString()
