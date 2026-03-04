@@ -10,6 +10,7 @@ data class GameState(
     // Ressources de base
     val mana: Long = 0L,
     val subMana: Double = 0.0,
+    val manaboost: Double = 0.0,
     val gold: Long = 100L,
     val subGold: Double = 0.0,
     val lastTickTimestamp: Long = System.currentTimeMillis(),

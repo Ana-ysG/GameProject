@@ -30,6 +30,10 @@ class GameViewModel(
         state = state.copy(mana = state.mana + 1)
     }
 
+    fun updateManaBoost(value: Double) {
+        state = state.copy(manaboost = value)
+    }
+
     // --- LOGIQUE DU REPOSITORY ---
     fun getResourceById(id: String) = repository.getResource(id)
     fun getRecipeById(id: String) = repository.getRecipe(id)

@@ -15,16 +15,14 @@ object LogicEngine {
         return currentState.copy(lastTickTimestamp = System.currentTimeMillis())
     }
     private fun generateMana(state: GameState, dt: Double): GameState {
-        val baseRegen = 1 // Le mana remonte plus doucement
-        val total = state.mana + state.subMana + (baseRegen * dt)
+        val baseRegen = 0.5 // Le mana remonte plus doucement
+        val manaboost = state.manaboost
+        val total = state.mana + state.subMana + (baseRegen * dt * manaboost)
 
-        // On peut ajouter une limite (Cap) pour ne pas dépasser le mana max
-        val manaMax = 100.0
-        val finalMana = total.coerceAtMost(manaMax)
 
         return state.copy(
-            mana = finalMana.toLong(),
-            subMana = finalMana % 1
+            mana = total.toLong(),
+            subMana = total % 1
         )
     }
 

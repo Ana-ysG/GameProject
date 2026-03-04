@@ -28,13 +28,14 @@ fun StatueScreen(viewModel: GameViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Moteur actif : $readableTime",
-            style = MaterialTheme.typography.labelSmall,
-        )
+        Button(
+            onClick = { viewModel.updateManaBoost(1.0) },
+            modifier = Modifier.size(100.dp),
+        ){
+            Text("Auto", fontSize = 20.sp)
+        }
 
-        val progress = viewModel.state.mana / 50.0
-        SmoothProgressBar(progress)
+        Spacer(modifier = Modifier.height(40.dp))
 
         Text(text = "L'Autel Ancien", fontSize = 28.sp)
         Text(text = "Une divinité semble attendre une offrande...", fontSize = 14.sp)
