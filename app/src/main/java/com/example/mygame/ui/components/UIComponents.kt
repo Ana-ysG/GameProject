@@ -205,37 +205,14 @@ fun SmoothProgressBar(targetProgress: Double, height: Dp = 24.dp) {
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun CardsDemoPreview() {
     Column(modifier = Modifier.padding(16.dp)) {
-        ResourceInfo(label = "Or", value = "1000", icon = Icons.Default.Build)
-        GameText.ResourceAmount("Test", color = Color.Red, icon = Icons.Default.Build)
+
 
         SmoothProgressBar(targetProgress = 0.7)
-        
 
-        Text("Variante Horizontale (Large) :")
-        GameCard(backgroundImage = android.R.drawable.ic_dialog_map) {
-            Text("Forêt Mystérieuse", color = Color.White, style = MaterialTheme.typography.titleLarge)
-            Text("Difficulté : ⭐⭐", color = Color.White)
-            Text("Difficulté : ⭐⭐", color = Color.White)
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text("Variante Verticale (Portrait) :")
-        Row {
-            VerticalGameCard(backgroundImage = android.R.drawable.ic_menu_gallery) {
-                Text("Guerrier", color = Color.White)
-                Spacer(Modifier.weight(1f))
-                Text("LVL 10", color = Color.Cyan)
-            }
-            VerticalGameCard {
-                Text("Mage")
-                Spacer(Modifier.weight(1f))
-                Text("LVL 12", color = Color.Magenta)
-            }
-        }
     }
 }

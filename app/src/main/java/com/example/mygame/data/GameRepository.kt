@@ -35,11 +35,17 @@ class GameRepository {
         return GameDatabase.getActionEnityById(id)
     }
 
-
-
-    fun getProductionZonesForIds(ids: List<String>): List<ActionEntity.ProductionZone> {
-        return ids.mapNotNull { getProductionZone(it) }
+    // --- ACCÈS COMBAT ---
+    fun getEnemy(id: String): Enemy? {
+        return GameDatabase.getEnemy(id)
     }
+    fun getFloor(id: String): DungeonFloor? {
+        return GameDatabase.getFloor(id)
+    }
+    fun getDungeon(id: String): Dungeon? {
+        return GameDatabase.getDungeon(id)
+    }
+
 
     // --- LOGIQUE DE BOUTIQUE ---
     fun getShop(id: String): Shop? {

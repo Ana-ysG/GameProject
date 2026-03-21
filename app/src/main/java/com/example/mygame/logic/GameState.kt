@@ -17,6 +17,13 @@ data class GameState(
     val inventory: InventoryData = InventoryData(),
     //val production: ProductionManager = ProductionManager(), // Data class pour le manager
 
+    //Etat du joueur
+    val hp : Double = 100.0,
+    val maxHp : Double = 100.0,
+    val baseAttack : Double = 10.0,
+    val baseDefense : Double = 10.0,
+
+
     // Progression
     val currentClassName: String = "Apprenti",
     val level: Long = 1L,
@@ -37,6 +44,8 @@ data class GameState(
     //gestion de l'action en cours
     val currentActionId: String? = null,
     val actionProgress: Double = 0.0,
+
+    val combatActive : Boolean = false,
 )
 
 

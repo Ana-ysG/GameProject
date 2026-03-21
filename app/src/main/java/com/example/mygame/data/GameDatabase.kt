@@ -3,6 +3,7 @@ package com.example.mygame.data
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import com.example.mygame.R
+import kotlin.collections.find
 
 object GameDatabase {
     // Ressources
@@ -111,12 +112,92 @@ object GameDatabase {
         availableActionsIds = listOf("green_herb","wood")
     )
 
+    // Les Ennemis de la "Forêt Débutante"
+    val enemySlime = Enemy(
+        id = "en_slime_green",
+        name = "Slime Gluant",
+        hp = 30,
+        attack = 5,
+        defense = 2,
+        loot = listOf(
+            LootDrop("gold", 5, 1.0),       // 100% de chance d'avoir de l'or
+            LootDrop("slime_gel", 1, 0.3)   // 30% de chance d'avoir du gel
+        )
+    )
+
+    val enemyWolf = Enemy(
+        id = "en_forest_wolf",
+        name = "Loup Affamé",
+        hp = 60,
+        attack = 12,
+        defense = 4,
+        loot = listOf(
+            LootDrop("gold", 15, 1.0),
+            LootDrop("wolf_fur", 1, 0.15)  // Rare : 15%
+        )
+    )
+
+    // Un Ennemi plus costaud pour l'étage 2
+    val enemyGoblin = Enemy(
+        id = "en_goblin_scout",
+        name = "Éclaireur Gobelin",
+        hp = 100,
+        attack = 18,
+        defense = 8,
+        loot = listOf(
+            LootDrop("gold", 40, 1.0),
+            LootDrop("iron_ore", 2, 0.4)
+        )
+    )
+    val floorForestEntry = DungeonFloor(
+        id = "floor_forest_1",
+        name = "Orée du Bois",
+        description = "L'herbe est haute et les slimes pullulent.",
+        isUnlocked = true, // Le tout premier étage est ouvert par défaut
+        enemiesIds = listOf("en_slime_green"), // Uniquement des slimes pour s'échauffer
+        clearRewardGold = 100
+    )
+
+    val floorForestDeep = DungeonFloor(
+        id = "floor_forest_2",
+        name = "Forêt Sombre",
+        description = "Les loups rôdent entre les arbres centenaires.",
+        isUnlocked = false,
+        enemiesIds = listOf("en_slime_green", "en_forest_wolf"), // Mix de monstres
+        clearRewardGold = 250
+    )
+
+    val floorGoblinCamp = DungeonFloor(
+        id = "floor_forest_3",
+        name = "Campement Gobelin",
+        description = "Attention aux embuscades !",
+        isUnlocked = false,
+        enemiesIds = listOf("en_forest_wolf", "en_goblin_scout"),
+        clearRewardGold = 600
+    )
+
+    val forestDungeon = Dungeon(
+        id = "dungeon_forest",
+        name = "Forêt des Murmures",
+        isUnlocked = true,
+        floors = listOf("floor_forest_1", "floor_forest_2", "floor_forest_3"),
+        firstClearBonusId = "class_warrior" // Débloque une nouvelle classe de héros à la fin !
+    )
+
+    private val enemies = listOf(enemySlime, enemyWolf, enemyGoblin).associateBy { it.id }
+    private val floors = listOf(floorForestEntry, floorForestDeep, floorGoblinCamp).associateBy { it.id }
+    private val dungeons = listOf(forestDungeon).associateBy { it.id }
+
+
     fun getResourceById(id: String) = resourceList.find { it.id == id }
     fun getIconForRessource(id : String) = getResourceById(id)?.icon ?: Icons.Default.Build
     fun getRecepie(id: String) = recipes.find { it.id == id }
     fun getProductionZoneById(id: String) = productionZones.find { it.id == id }
     fun getResouceName(id: String) = getResourceById(id)?.name ?: "Inconnu"
     fun getProductionAreaById(id: String) = productionAreas.find { it.id == id }
+    fun getEnemy(id: String) = enemies[id]
+    fun getFloor(id: String) = floors[id]
+    fun getDungeon(id: String) = dungeons[id]
 
     fun getActionEnityById(id: String) = machines.find { it.id == id } ?: productionZones.find { it.id == id }
 }

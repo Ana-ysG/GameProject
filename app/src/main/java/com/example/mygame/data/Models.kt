@@ -144,15 +144,24 @@ data class Enemy(
     val loot: List<LootDrop>
 )
 
-data class Dungeon(
+data class DungeonFloor(
     val id: String,
     val name: String,
     val description: String,
+    val icon : ImageVector = Icons.Default.Build,
     val iconResId: Int = android.R.drawable.ic_menu_report_image,
     var isUnlocked: Boolean = false,
     val enemiesIds: List<String>, // Liste des monstres à battre
-    val bossId: String,
     val clearRewardGold: Int,
+)
+
+data class Dungeon(
+    val id: String,
+    val name: String,
+    val icon : ImageVector = Icons.Default.Build,
+    val iconResId: Int = android.R.drawable.ic_menu_report_image,
+    var isUnlocked: Boolean = false,
+    val floors: List<String>,
     val firstClearBonusId: String? // Récompense spéciale la première fois (ex: une Classe)
 )
 

@@ -42,6 +42,9 @@ class GameViewModel(
     fun getALLproductionAreas() = repository.getAllProductionAreas()
     fun getShopById(id: String) = repository.getShop(id)
     fun getAllSellableResources() = repository.getAllSellableResources()
+    fun getEnemyById(id: String) = repository.getEnemy(id)
+    fun getFloorById(id: String) = repository.getFloor(id)
+    fun getDungeonById(id: String) = repository.getDungeon(id)
 
 
     fun updateGameTick() {
