@@ -3,6 +3,7 @@ package com.example.mygame
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,10 +28,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mygame.data.ActionEntity
 import com.example.mygame.data.GameDatabase
+import com.example.mygame.navigation.RootGraph
 import com.example.mygame.ui.screens.ExplorationScreen
 import com.example.mygame.ui.PopUp.IconActionButton
 import com.example.mygame.ui.PopUp.SelectionDialog
@@ -47,7 +50,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val gameViewModel: GameViewModel = viewModel()
-            MainScreen(gameViewModel)
+            LaunchedEffect(Unit) {
+                while (true) {
+                    gameViewModel.updateGameTick()
+                    delay(1000L) // Attend 1 seconde entre chaque battement
+                }
+            }
+            RootGraph(gameViewModel)
 
         }
     }
@@ -55,7 +64,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(gameViewModel: GameViewModel) {
-    var currentTab by remember { mutableIntStateOf(0) }
+    var currentTab by remember { mutableIntStateOf(5) }
     val selectedMachine = remember(currentTab) { mutableStateOf<ActionEntity.Machine?>(null) }
 
     val showMachineSelectionDialog = currentTab == 1 && gameViewModel.state.currentWorkshopMachine == null
@@ -105,6 +114,12 @@ fun MainScreen(gameViewModel: GameViewModel) {
                     label = { Text("Marché") },
                     icon = { Icon(Icons.Default.ShoppingCart, "Vendre") } // Utilise ShoppingCart
                 )
+                NavigationBarItem(
+                    selected = currentTab == 5, // Nouvel index
+                    onClick = { currentTab = 5 },
+                    label = { Text("test") },
+                    icon = { Icon(Icons.Default.Settings, "Vendre") } // Utilise ShoppingCart
+                )
             }
         }
     ) { innerPadding ->
@@ -134,6 +149,7 @@ fun MainScreen(gameViewModel: GameViewModel) {
                 2 -> ExplorationScreen(gameViewModel)
                 3 -> InventoryScreen(gameViewModel)
                 4 -> MarketScreen(gameViewModel)
+                5 -> DisplayPicture()
             }
         }
     }
@@ -168,11 +184,20 @@ fun MainScreen(gameViewModel: GameViewModel) {
     }
 }
 
+@Composable
+fun DisplayPicture() {
+    Image(
+        painter = painterResource(id = R.drawable.my_picture),
+        contentDescription = "My favorite photo"
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    val gameViewModel = GameViewModel()
-    MainScreen(gameViewModel)
+    val gameViewModel: GameViewModel = viewModel()
+    //MainScreen(gameViewModel)
+    RootGraph(gameViewModel)
 }
 
 
